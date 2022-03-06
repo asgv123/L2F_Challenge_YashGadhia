@@ -80,7 +80,7 @@ requirements = [
 if __name__ == "__main__":
     write_version_file()
     setup(
-        name="my_gym_jsbsim",
+        name="andy_gym_jsbsim",
         version=version,
         author="Andy",
         author_email="asgv321@gmail.com",
