@@ -78,7 +78,11 @@ class HeadingControlTask(Task):
         # roll_error_scale = 0.35  # radians ~= 20 degrees
         # roll_r = math.exp(-((sim.get_property_value(c.attitude_roll_rad) / roll_error_scale) ** 2))
         t_rr = sim.get_property_value(c.attitude_roll_rad) 
-        roll_r = -200 * math.fabs(t_rr)
+        roll_r = -20 * math.fabs(t_rr)
+        # if math.fabs(t_rr) < 0.087: # ~5deg
+        #     roll_r = 760 * math.exp(-1000 * math.fabs(t_rr) / 9) - 400
+        # else:
+        #     roll_r = -400
 
         # speed_error_scale = 16  # fps (~5%)
         # speed_r = math.exp(-(((sim.get_property_value(c.velocities_u_fps) - 800) / speed_error_scale) ** 2))
@@ -100,14 +104,15 @@ class HeadingControlTask(Task):
         #     )  # geometric mean
         # except OverflowError:
         #     accel_r = 0
-        accel_r = -200 * (math.fabs(sim.get_property_value(c.accelerations_n_pilot_x_norm))\
-                            + math.fabs(sim.get_property_value(c.accelerations_n_pilot_y_norm))\
-                            + 2 * (1 - math.fabs(sim.get_property_value(c.accelerations_n_pilot_z_norm)) ** 2)
+        accel_r = -340 * ((math.fabs(sim.get_property_value(c.accelerations_n_pilot_x_norm)) - 0.2) ** 2 \
+                            + (math.fabs(sim.get_property_value(c.accelerations_n_pilot_y_norm)) - 0.2) ** 2\
+                            + (math.fabs(sim.get_property_value(c.accelerations_n_pilot_z_norm)) - 1) ** 2
                             )
 
         # reward = (heading_r * alt_r * accel_r * roll_r * speed_r) ** (1 / 5)
-        reward = (heading_r + alt_r + accel_r + roll_r + speed_r)
-        return reward
+        # rew = (heading_r + alt_r + accel_r + roll_r + speed_r)
+        rew = heading_r + roll_r
+        return rew
 
     def is_terminal(self, state, sim):
         # Change heading every 150 seconds
