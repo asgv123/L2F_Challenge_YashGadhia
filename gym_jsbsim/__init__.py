@@ -33,7 +33,7 @@ if "JSBSIM_ROOT_DIR" not in os.environ:
 
 for task_name in TASKS:
     register(
-        id=f"GymJsbsim-{task_name}-v0",
+        id=f"AndyGymJsbsim-{task_name}-v0",
         entry_point="gym_jsbsim.jsbsim_env:JSBSimEnv",
         kwargs=dict(task=TASKS[task_name]),
     )

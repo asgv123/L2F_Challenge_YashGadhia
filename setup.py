@@ -80,12 +80,12 @@ requirements = [
 if __name__ == "__main__":
     write_version_file()
     setup(
-        name="gym_jsbsim",
+        name="my_gym_jsbsim",
         version=version,
-        author="Guillaume Alleon",
-        author_email="guillaume.alleon@gmail.com",
-        url="https://github.com/galleon/gym-jsbsim",
-        description="Gym JSBSim environment",
+        author="Andy",
+        author_email="asgv321@gmail.com",
+        url="https://github.com/asgv123/L2F_Challenge_YashGadhia",
+        description="Modified Gym JSBSim environment",
         long_description=long_description,
         long_description_content_type="text/markdown",
         license="LGPL 2.1",
