@@ -57,38 +57,56 @@ class HeadingControlTask(Task):
         """
         Compute reward for task
         """
-        # Reward is built as a geometric mean of scaled gaussian rewards for each relevant variable
+        # # Reward is built as a geometric mean of scaled gaussian rewards for each relevant variable
 
-        heading_error_scale = 5.0  # degrees
-        heading_r = math.exp(-((sim.get_property_value(c.delta_heading) / heading_error_scale) ** 2))
+        # heading_error_scale = 5.0  # degrees
+        # heading_r = math.exp(-((sim.get_property_value(c.delta_heading) / heading_error_scale) ** 2))
+        t_dh = sim.get_property_value(c.delta_heading) 
+        if math.fabs(t_dh) < 6:
+            heading_r =  10 * ((6 - math.fabs(t_dh)) ** 2)
+        else:
+            heading_r =  -10 * (t_dh ** 2)
 
-        alt_error_scale = 50.0  # feet
-        alt_r = math.exp(-((sim.get_property_value(c.delta_altitude) / alt_error_scale) ** 2))
+        # alt_error_scale = 50.0  # feet
+        # alt_r = math.exp(-((sim.get_property_value(c.delta_altitude) / alt_error_scale) ** 2))
+        t_da = sim.get_property_value(c.delta_altitude) 
+        if math.fabs(t_da) < 61:
+            alt_r =  5 * ((61 - math.fabs(t_da)) ** 3)
+        else:
+            alt_r =  -5 * (math.fabs(t_da) ** 3)
 
-        roll_error_scale = 0.35  # radians ~= 20 degrees
-        roll_r = math.exp(-((sim.get_property_value(c.attitude_roll_rad) / roll_error_scale) ** 2))
+        # roll_error_scale = 0.35  # radians ~= 20 degrees
+        # roll_r = math.exp(-((sim.get_property_value(c.attitude_roll_rad) / roll_error_scale) ** 2))
+        t_rr = sim.get_property_value(c.attitude_roll_rad) 
+        roll_r = -200 * math.fabs(t_rr)
 
-        speed_error_scale = 16  # fps (~5%)
-        speed_r = math.exp(-(((sim.get_property_value(c.velocities_u_fps) - 800) / speed_error_scale) ** 2))
+        # speed_error_scale = 16  # fps (~5%)
+        # speed_r = math.exp(-(((sim.get_property_value(c.velocities_u_fps) - 800) / speed_error_scale) ** 2))
+        speed_r = -10 * (800 - sim.get_property_value(c.velocities_u_fps))
 
-        # accel scale in "g"s
-        accel_error_scale_x = 0.1
-        accel_error_scale_y = 0.1
-        accel_error_scale_z = 0.5
-        try:
-            accel_r = math.exp(
-                -(
-                    (sim.get_property_value(c.accelerations_n_pilot_x_norm) / accel_error_scale_x) ** 2
-                    + (sim.get_property_value(c.accelerations_n_pilot_y_norm) / accel_error_scale_y) ** 2
-                    + ((sim.get_property_value(c.accelerations_n_pilot_z_norm) + 1) / accel_error_scale_z) ** 2
-                )  # normal value for z component is -1 g
-            ) ** (
-                1 / 3
-            )  # geometric mean
-        except OverflowError:
-            accel_r = 0
+        # # accel scale in "g"s
+        # accel_error_scale_x = 0.1
+        # accel_error_scale_y = 0.1
+        # accel_error_scale_z = 0.5
+        # try:
+        #     accel_r = math.exp(
+        #         -(
+        #             (sim.get_property_value(c.accelerations_n_pilot_x_norm) / accel_error_scale_x) ** 2
+        #             + (sim.get_property_value(c.accelerations_n_pilot_y_norm) / accel_error_scale_y) ** 2
+        #             + ((sim.get_property_value(c.accelerations_n_pilot_z_norm) + 1) / accel_error_scale_z) ** 2
+        #         )  # normal value for z component is -1 g
+        #     ) ** (
+        #         1 / 3
+        #     )  # geometric mean
+        # except OverflowError:
+        #     accel_r = 0
+        accel_r = -200 * (math.fabs(sim.get_property_value(c.accelerations_n_pilot_x_norm))\
+                            + math.fabs(sim.get_property_value(c.accelerations_n_pilot_y_norm))\
+                            + 2 * (1 - math.fabs(sim.get_property_value(c.accelerations_n_pilot_z_norm)) ** 2)
+                            )
 
-        reward = (heading_r * alt_r * accel_r * roll_r * speed_r) ** (1 / 5)
+        # reward = (heading_r * alt_r * accel_r * roll_r * speed_r) ** (1 / 5)
+        reward = (heading_r + alt_r + accel_r + roll_r + speed_r)
         return reward
 
     def is_terminal(self, state, sim):
