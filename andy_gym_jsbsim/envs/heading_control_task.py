@@ -78,11 +78,11 @@ class HeadingControlTask(Task):
         # roll_error_scale = 0.35  # radians ~= 20 degrees
         # roll_r = math.exp(-((sim.get_property_value(c.attitude_roll_rad) / roll_error_scale) ** 2))
         t_rr = sim.get_property_value(c.attitude_roll_rad) 
-        roll_r = -20 * math.fabs(t_rr)
-        # if math.fabs(t_rr) < 0.087: # ~5deg
-        #     roll_r = 760 * math.exp(-1000 * math.fabs(t_rr) / 9) - 400
-        # else:
-        #     roll_r = -400
+        # roll_r = -20 * math.fabs(t_rr)
+        if math.fabs(t_rr) < 0.087: # ~5deg
+            roll_r = 760 * math.exp(-1000 * math.fabs(t_rr) / 9) - 400
+        else:
+            roll_r = -400
 
         # speed_error_scale = 16  # fps (~5%)
         # speed_r = math.exp(-(((sim.get_property_value(c.velocities_u_fps) - 800) / speed_error_scale) ** 2))
