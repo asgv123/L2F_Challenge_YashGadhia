@@ -1,5 +1,5 @@
 import gym
-import gym_jsbsim
+import andy_gym_jsbsim
 
 
 def random_agent():

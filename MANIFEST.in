@@ -1,2 +1,2 @@
-graft gym_jsbsim/docs
+graft andy_gym_jsbsim/docs
 global-exclude *.py[cod] __pycache__ *.so

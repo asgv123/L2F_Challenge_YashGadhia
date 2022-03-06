@@ -36,13 +36,13 @@ cwd = os.path.dirname(os.path.abspath(__file__))
 
 
 def write_version_file():
-    with open(os.path.join(cwd, "gym_jsbsim", "version.py"), "w") as file:
+    with open(os.path.join(cwd, "andy_gym_jsbsim", "version.py"), "w") as file:
         file.write("__version__ = '{}'\n".format(version))
         file.write("__jsbsim_version__ = '{}'\n".format(jsbsim_version))
 
 
 # download a/c data
-to_path = "gym_jsbsim/"
+to_path = "andy_gym_jsbsim/"
 
 urllib.request.urlretrieve(
     "https://github.com/JSBSim-Team/jsbsim/archive/v{}.zip".format(jsbsim_version),
@@ -58,8 +58,8 @@ for file in archive.namelist():
         archive.extract(file, to_path)
 
 # move aircraft from docs to jsbsim directory
-from_path = os.path.join("gym_jsbsim", "docs", "aircraft")
-to_path = os.path.join("gym_jsbsim", "jsbsim-{}".format(jsbsim_version), "aircraft")
+from_path = os.path.join("andy_gym_jsbsim", "docs", "aircraft")
+to_path = os.path.join("andy_gym_jsbsim", "jsbsim-{}".format(jsbsim_version), "aircraft")
 for aircraft in os.listdir(from_path):
     for f in os.listdir(os.path.join(from_path, aircraft)):
         shutil.copyfile(
@@ -80,7 +80,7 @@ requirements = [
 if __name__ == "__main__":
     write_version_file()
     setup(
-        name="andy_gym_jsbsim",
+        name="andy_andy_gym_jsbsim",
         version=version,
         author="Andy",
         author_email="asgv321@gmail.com",
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         tests_require=["pytest"],
         packages=find_packages(exclude=("docs", "tests", "notebooks")),
         package_data={
-            "gym_jsbsim": [
+            "andy_gym_jsbsim": [
                 "jsbsim-{}/aircraft/*/*.xml".format(jsbsim_version),
                 "jsbsim-{}/systems/*.xml".format(jsbsim_version),
                 "jsbsim-{}/engine/*.xml".format(jsbsim_version),
