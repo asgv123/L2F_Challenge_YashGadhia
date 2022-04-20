@@ -7,8 +7,11 @@ from gym_jsbsim.catalogs.catalog import Catalog
 
 class Task:
     """
+
     A class to subclass in order to create a task with its own observation variables,
+
     action variables, termination conditions and agent_reward function.
+
     """
 
     action_var = None
@@ -59,35 +62,33 @@ class Task:
     def get_observation_space(self):
         """
         Get the task's observation Space object
+
         :return : spaces.Tuple composed by spaces of each property.
         """
 
-        low = np.empty(shape=(0,))
-        high = np.empty(shape=(0,))
+        space_tuple = ()
 
         for prop in self.state_var:
             if prop.spaces is Box:
-                low = np.concatenate([low,np.array([prop.min])])
-                high = np.concatenate([high,np.array([prop.max])])
+                space_tuple += (Box(low=np.array([prop.min]), high=np.array([prop.max]), dtype="float"),)
             elif prop.spaces is Discrete:
-                raise TypeError("Discrete state space found")
-        return Box(low=low, high=high, dtype="float")
+                space_tuple += (Discrete(prop.max - prop.min + 1),)
+        return gym.spaces.Tuple(space_tuple)
 
     def get_action_space(self):
         """
         Get the task's action Space object
+
         :return : spaces.Tuple composed by spaces of each property.
         """
-        low = np.empty(shape=(0,))
-        high = np.empty(shape=(0,))
+        space_tuple = ()
 
         for prop in self.action_var:
             if prop.spaces is Box:
-                low = np.concatenate([low,np.array([prop.min])])
-                high = np.concatenate([high,np.array([prop.max])])
+                space_tuple += (Box(low=np.array([prop.min]), high=np.array([prop.max]), dtype="float"),)
             elif prop.spaces is Discrete:
-                raise TypeError("Discrete action space found")
-        return Box(low=low, high=high, dtype="float")
+                space_tuple += (Discrete(prop.max - prop.min + 1),)
+        return gym.spaces.Tuple(space_tuple)
 
     def render(self, sim, mode="human", **kwargs):
         pass

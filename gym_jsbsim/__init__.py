@@ -3,6 +3,7 @@ import os
 try:
     from .version import __version__, __jsbsim_version__  # noqa: F401
 except ImportError:
+    print("Couldnt find version")
     pass
 
 from jsbsim import __version__ as jsbsim_version
@@ -33,7 +34,7 @@ if "JSBSIM_ROOT_DIR" not in os.environ:
 
 for task_name in TASKS:
     register(
-        id=f"AndyGymJsbsim-{task_name}-v0",
+        id=f"GymJsbsim-{task_name}-v0",
         entry_point="gym_jsbsim.jsbsim_env:JSBSimEnv",
         kwargs=dict(task=TASKS[task_name]),
     )

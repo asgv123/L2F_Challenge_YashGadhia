@@ -1,0 +1,874 @@
+README.md: * A process to add extra features (like delta_heading for exemple) and the capability to call a dedicated function to update this attribute every time steps.
+README.md:In this task, the aircraft should perform a stable steady flight following its initial heading and altitude. Every 150 seconds, a new target heading is set. At each time the target heading is more and more complicated to reach, starting with a delta of ±10° (random sign), following with ±20°, then ±30° and so on.
+README.md:As state set for this environment, we compute every timestep, the distance (di) and angle (ai) to the next 4 path points according to location of the aircraft (ie: d1 to d4 and a1 to a4)
+build/lib/gym_jsbsim/envs/taxi_control_task.py:    perf_time = 0
+build/lib/gym_jsbsim/envs/taxi_control_task.py:    perf_time_avg = 0
+build/lib/gym_jsbsim/envs/taxi_control_task.py:        # average velocity with simulation time ponderation ... normalised
+build/lib/gym_jsbsim/envs/taxi_control_task.py:        self.perf_time += math.fabs(sim.get_property_value(c.velocities_vc_fps))
+build/lib/gym_jsbsim/envs/taxi_control_task.py:        av_vel = self.perf_time / self.nb_step
+build/lib/gym_jsbsim/envs/taxi_control_task.py:        dist_total = av_vel * sim.get_property_value(c.simulation_sim_time_sec)
+build/lib/gym_jsbsim/envs/taxi_control_task.py:        dist_total_norm = dist_total / (20.0 * self.k2f * sim.get_property_value(c.simulation_sim_time_sec))
+build/lib/gym_jsbsim/envs/taxi_control_task.py:            sim.get_property_value(c.simulation_sim_time_sec) >= 450
+build/lib/gym_jsbsim/envs/taxi_control_task.py:        #     print('Simulation ended at t='+str(sim.get_property_value(c.simulation_sim_time_sec)))
+build/lib/gym_jsbsim/envs/taxi_control_task.py:        #     print('Avg vel: '+str(self.perf_time / self.nb_step))
+build/lib/gym_jsbsim/envs/heading_altitude_control_task.py:        if sim.get_property_value(c.simulation_sim_time_sec) >= sim.get_property_value(c.steady_flight):
+build/lib/gym_jsbsim/envs/heading_altitude_control_task.py:            # print(f'Time to change: {sim.get_property_value(c.simulation_sim_time_sec)} (Altitude: {sim.get_property_value(c.target_altitude_ft)} -> {new_alt}, Heading: {sim.get_property_value(c.target_heading_deg)} -> {new_heading})')
+build/lib/gym_jsbsim/envs/heading_altitude_control_task.py:        if sim.get_property_value(c.simulation_sim_time_sec) > 10:
+build/lib/gym_jsbsim/envs/taxiap_control_task.py:            sim.get_property_value(c.simulation_sim_time_sec) >= 450
+build/lib/gym_jsbsim/envs/taxiap_control_task.py:        #     print('Simulation ended at t='+str(sim.get_property_value(c.simulation_sim_time_sec)))
+build/lib/gym_jsbsim/envs/heading_control_task.py:        if sim.get_property_value(c.simulation_sim_time_sec) >= sim.get_property_value(c.steady_flight):
+build/lib/gym_jsbsim/envs/heading_control_task.py:            # print(f'Time to change: {sim.get_property_value(c.simulation_sim_time_sec)} (Heading: {sim.get_property_value(c.target_heading_deg)} -> {new_heading})')
+build/lib/gym_jsbsim/envs/heading_control_task.py:        if sim.get_property_value(c.simulation_sim_time_sec) > 10:
+build/lib/gym_jsbsim/jsbsim_env.py:        Run one timestep of the environment's dynamics. When end of
+build/lib/gym_jsbsim/jsbsim_env.py:    def get_sim_time(self):
+build/lib/gym_jsbsim/jsbsim_env.py:        """ Gets the simulation time from sim, a float. """
+build/lib/gym_jsbsim/jsbsim_env.py:        return self.sim.get_sim_time()
+build/lib/gym_jsbsim/catalogs/jsbsim_catalog.py:    simulation_dt = Property("simulation/dt", "JSBSim simulation timestep [s]", access="R")
+build/lib/gym_jsbsim/catalogs/jsbsim_catalog.py:    simulation_sim_time_sec = Property("simulation/sim-time-sec", "Simulation time [s]", access="R")
+build/lib/gym_jsbsim/catalogs/my_catalog.py:        sec = str(sim.get_property_value(JsbsimCatalog.simulation_sim_time_sec))
+build/lib/gym_jsbsim/catalogs/my_catalog.py:    target_time = Property("tc/target-time-sec", "target time [sec]", 0)
+build/lib/gym_jsbsim/simulation.py:        # set jsbsim integration time step
+build/lib/gym_jsbsim/simulation.py:            raise RuntimeError("JSBSim failed to init simulation conditions.")
+build/lib/gym_jsbsim/simulation.py:        end, e.g. because a simulation time was specified. False is returned
+build/lib/gym_jsbsim/simulation.py:                raise RuntimeError("JSBSim failed.")
+build/lib/gym_jsbsim/simulation.py:    def get_sim_time(self):
+build/lib/gym_jsbsim/simulation.py:        """ Gets the simulation time from JSBSim, a float. """
+build/lib/gym_jsbsim/simulation.py:        return self.jsbsim_exec.get_sim_time()
+build/lib/gym_jsbsim/simulation.py:                raise RuntimeError(f"{prop} is not readable")
+build/lib/gym_jsbsim/simulation.py:                raise RuntimeError(f"{prop} is not readable")
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>      0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>      4 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>      3 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>     5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>     1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172r/c172r.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172r/c172r.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172r/c172r.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172r/c172r.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172ap.xml:     hdot command (hdot is time rate of change of altitude, or rate of climb). As
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172x.xml:                       <time> 0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172x.xml:                       <time> 2 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172x.xml:                       <time> 1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172x.xml:                       <time> 1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/SGS/SGS.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/SGS/SGS.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/SGS/SGS.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/SGS/SGS.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pa28/pa28.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pa28/pa28.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pa28/pa28.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pa28/pa28.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>4.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>3.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>5.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>1.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>     5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>     1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>     5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>     1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>     5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>     1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/Submarine_Scout.xml:    - aneroid (pressure altimeter?) reading to 10,000 feet.
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 60.0
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 120.0
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 250.0
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 150
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 160
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 500
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 1695.0
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 1700.0
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 1770.0
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 1780.0
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:      <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0.55</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0.55</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>3.0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>3.0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c182/c182.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c182/c182.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c182/c182.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c182/c182.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>3.0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>3.0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>3.0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>3.0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>2.5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>10</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs233/sgs233.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs233/sgs233.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.6</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.6</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>      0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>      4 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>      3 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>     5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>     1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:Accelerating the aircraft caused the nose to climb, and swing to the left. At 110 miles per hour, there was about 15 to 20 pounds of back force on the control column, which could not be trimmed out because the aircraft had no pilot-adjustable, moveable horizontal stabilizer. Therefore, Camel pilots had to fly two-to-three hour missions, continually applying forward pressure just to maintain level flight. Letting go resulted in the aircraft pitching up, and rolling inverted to the right. Moving the stick forward to enter a dive caused the Camel to yaw left because of gyroscopic force, and correcting this yaw with right rudder caused the nose to pitch down sharply. By today's standards the Camel was completely unacceptable, and yet many pilots of 1917-8, most with under 100 hours of flying time used it as a lethal weapon.
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:...I enjoyed flying the Camel, but its vices of control instability, extreme control sensitivity and pronounced gyroscopic effects all combined to create the impression of balancing an egg on the point of a needle rather than flying an aircraft...it was never forced into manoeuvres - they were executed by light pressure on the controls and subsequently relaxing, or sometimes reversing, the pressure once the desired rate of response was attained.
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:My Sopwith Camel is, as far as I'm aware, the only original World War 1 Camel ever brought back to flying condition. It was originally owned by Colonel Jarrett of the Jarrett War Museum located on the old Steel Pier in Atlantic City; who in the 1930's had the best museum of WWI equipment ever assembled, including the Belgian War Museum in Brussels. The Jarrett Museum fell on hard times following WWII and, with time and money on my side after my service period, and a lifelong ambition of owning a WWI aircraft, I purchased for a small sum (by today's standards) several antique aircraft including the Camel, a Nieuport 28, a Pfalz D.XII, a Fokker D.VII and a SPAD VII.
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:Since then I've spent more time flying the Camel than any of the other historical aircraft in our collection. I've also had more forced landings in it than all the rest of the WWI aircraft combined. It's that temperamental Le Rhone. Cylinders have blown, magneto's have failed, even fouled spark plugs have brought me down unceremoniously, with sweating hands and my heart in my mouth, desperately seeking a patch of open ground on which to land. Yet for all that it's the one I turn to first for any show or exhibition, as the Camel gets my blood going like no other. This is an aircraft that is a joy to fly.
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:With the Le Rhone being temperamental as it is, flying the Camel is best done at times when there are few other aircraft in the sky, leaving easy access to the airport in cases of emergency. The Camel touches down easily but runs out of rudder control almost instantly, and if you bounce your landing at all, you are likely to find yourself in a hairy ground loop looking at a rapidly bending aileron dragging in the grass.
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:"Camels were wonderful fliers when you had got used to them, which took about three months of hard flying. At the end of that time you were either dead, a nervous wreck, or the hell of a pilot and a terror to Huns . . ."
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:"The same with the half-roll. Nothing would half-roll like a Camel. A twitch of the stick and flick of the rudder and you were on your back. The nose dropped at once and you pulled out having made a complete reversal of direction in the least possible time.
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:" . . . a Camel had to be held in flying position all the time, and was out of it in a flash. It was nose light, having a rotary engine weighing next to nothing per horse power, and was rigged tail heavy so that you had to be holding her down all the time. Take your hand off the stick and it would rear right up with a terrific jerk and stand on its tail."
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:        <!-- This is Sw-sqft used many times below: -->
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:            <!-- This is a bit of a kludge to reduce the Camel service ceiling to 19,600 ft, and reduce performance above 12,000 as reported at the time. 
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:                    "its time period is 1 to 2 seconds, and the loss of height per turn 150 to 200 
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:                The rudder and elevator are very light and sensitive while the ailerons are astonishingly heavy, and appear to have practically no effect on anything at all. Heaving the stick from side to side produces a sort of drunken wallowing, like a politician trying to duck out of a commitment. A suspicious glance at the vibrating wings reveals that the ailerons are in fact still connected up -and the sight of them moving sluggishly in the airflow suggests the answer to the conundrum: the Camel has four enormous ailerons, and they are quite simply far too big. Furthermore, they have all the design subtlety of a quartet of barn doors. Frise effect, slotting, balancing, differential -these weren't even words in the aviation dictionary in 1916 when this lady was conceived, if you wanted your aeroplane to roll faster you just made the ailerons bigger. (And then, presumably, wondered why it didn't roll faster ... ) Those huge control surfaces so degrade the airflow over the wings that not only is their primary effect vastly blunted, but at the same time the drag thus engendered is awe-inspiring. Adverse yaw completely overcomes the normal secondary effect of roll, so that if you are so misguided as to take your feet off the Camel's rudder and then bank (say) to the left, the stubby round nose will instantly zap off to the right and keep going.    . . . 
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.5000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>1.5000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.3000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.3000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.9000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>1.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>1.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>5.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>4.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>5.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>1.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>2.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>7.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>5.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>6.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>12.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>0.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>1.0000</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>      0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>      4 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>      3 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>     5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>     1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                          <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                          <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/minisgs/minisgs.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/minisgs/minisgs.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/minisgs/minisgs.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/minisgs/minisgs.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172p/c172p.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172p/c172p.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172p/c172p.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c172p/c172p.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0.6</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0.6</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:    <!-- 41 properties output, + 1 for the time stamp -->
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml: <!-- 6 properties input, + 1 for the time stamp -->
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>2</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310ap.xml:     hdot command (hdot is time rate of change of altitude, or rate of climb). As
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>4</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>5</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>1</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/J3Cub/J3Cub.xml:  <reference refID="Du_Y_Thesis_2011" author="Yongliang Du" title="Development of real-time flight control system for low-cost vehicle" date="2011"/>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/J3Cub/J3Cub.xml:   * "Development of real-time flight control system for low-cost vehicle"
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>12</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/gear.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/gear.xml:          <time>     5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/flaps.xml:          <time>      0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/flaps.xml:          <time>      4 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/flaps.xml:          <time>      5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/alpha_buffet.xml:           <property>sim-time-sec</property>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/hook.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/hook.xml:          <time>     1.5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/refuel.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/refuel.xml:          <time>     2.5 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/speedbrakes.xml:          <time>     0 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/speedbrakes.xml:          <time>     1 </time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/catapult.xml:       <kinematic name="systems/catapult/cat-timer">
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/catapult.xml:                 <time>0.0</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/catapult.xml:                 <time>2.7</time>
+build/lib/gym_jsbsim/jsbsim-1.1.11/systems/airship_added_mass.xml:       <property> simulation/sim-time-sec </property>
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/Estes_E9.xml:  <builduptime> 0.15 </builduptime>
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/SRB.xml:  <builduptime> 0.2 </builduptime>
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:n1idle_max_delay [-] time constant for N1 change
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:maxstartenginetime [sec]
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:    after this time the automatic starting cycle is interrupted when the engine
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:itt_delay [-] time constant for ITT change
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:  <maxstartingtime>              20     </maxstartingtime>
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:n1idle_max_delay [-] time constant for N1 change
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:maxstartenginetime [sec]
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:    after this time the automatic starting cycle is interrupted when the engine
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:itt_delay [-] time constant for ITT change
+build/lib/gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:  <maxstartingtime>              20     </maxstartingtime>
+build/lib/gym_jsbsim/tests/test_simulation.py:            t = self.env.get_sim_time()
+build/lib/gym_jsbsim/tests/test_simulation.py:            t = self.env.get_sim_time()
+build/lib/gym_jsbsim/tests/test_simulation.py:            t = self.env.get_sim_time()
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>0</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>4</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>4</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>3</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>3</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>3</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>3</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>2</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>2</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>0</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>5</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>0</time>
+gym_jsbsim/docs/aircraft/A320/A320.xml:                        <time>2</time>
+gym_jsbsim/envs/taxi_control_task.py:    perf_time = 0
+gym_jsbsim/envs/taxi_control_task.py:    perf_time_avg = 0
+gym_jsbsim/envs/taxi_control_task.py:        # average velocity with simulation time ponderation ... normalised
+gym_jsbsim/envs/taxi_control_task.py:        self.perf_time += math.fabs(sim.get_property_value(c.velocities_vc_fps))
+gym_jsbsim/envs/taxi_control_task.py:        av_vel = self.perf_time / self.nb_step
+gym_jsbsim/envs/taxi_control_task.py:        dist_total = av_vel * sim.get_property_value(c.simulation_sim_time_sec)
+gym_jsbsim/envs/taxi_control_task.py:        dist_total_norm = dist_total / (20.0 * self.k2f * sim.get_property_value(c.simulation_sim_time_sec))
+gym_jsbsim/envs/taxi_control_task.py:            sim.get_property_value(c.simulation_sim_time_sec) >= 450
+gym_jsbsim/envs/taxi_control_task.py:        #     print('Simulation ended at t='+str(sim.get_property_value(c.simulation_sim_time_sec)))
+gym_jsbsim/envs/taxi_control_task.py:        #     print('Avg vel: '+str(self.perf_time / self.nb_step))
+gym_jsbsim/envs/heading_altitude_control_task.py:        if sim.get_property_value(c.simulation_sim_time_sec) >= sim.get_property_value(c.steady_flight):
+gym_jsbsim/envs/heading_altitude_control_task.py:            # print(f'Time to change: {sim.get_property_value(c.simulation_sim_time_sec)} (Altitude: {sim.get_property_value(c.target_altitude_ft)} -> {new_alt}, Heading: {sim.get_property_value(c.target_heading_deg)} -> {new_heading})')
+gym_jsbsim/envs/heading_altitude_control_task.py:        if sim.get_property_value(c.simulation_sim_time_sec) > 10:
+Binary file gym_jsbsim/envs/__pycache__/taxi_control_task.cpython-38.pyc matches
+Binary file gym_jsbsim/envs/__pycache__/heading_altitude_control_task.cpython-38.pyc matches
+Binary file gym_jsbsim/envs/__pycache__/heading_control_task.cpython-38.pyc matches
+Binary file gym_jsbsim/envs/__pycache__/taxiap_control_task.cpython-38.pyc matches
+gym_jsbsim/envs/taxiap_control_task.py:            sim.get_property_value(c.simulation_sim_time_sec) >= 450
+gym_jsbsim/envs/taxiap_control_task.py:        #     print('Simulation ended at t='+str(sim.get_property_value(c.simulation_sim_time_sec)))
+gym_jsbsim/envs/heading_control_task.py:        if sim.get_property_value(c.simulation_sim_time_sec) >= sim.get_property_value(c.steady_flight):
+gym_jsbsim/envs/heading_control_task.py:            # print(f'Time to change: {sim.get_property_value(c.simulation_sim_time_sec)} (Heading: {sim.get_property_value(c.target_heading_deg)} -> {new_heading})')
+gym_jsbsim/envs/heading_control_task.py:        if sim.get_property_value(c.simulation_sim_time_sec) > 10:
+gym_jsbsim/jsbsim_env.py:        Run one timestep of the environment's dynamics. When end of
+gym_jsbsim/jsbsim_env.py:    def get_sim_time(self):
+gym_jsbsim/jsbsim_env.py:        """ Gets the simulation time from sim, a float. """
+gym_jsbsim/jsbsim_env.py:        return self.sim.get_sim_time()
+gym_jsbsim/catalogs/jsbsim_catalog.py:    simulation_dt = Property("simulation/dt", "JSBSim simulation timestep [s]", access="R")
+gym_jsbsim/catalogs/jsbsim_catalog.py:    simulation_sim_time_sec = Property("simulation/sim-time-sec", "Simulation time [s]", access="R")
+Binary file gym_jsbsim/catalogs/__pycache__/my_catalog.cpython-38.pyc matches
+Binary file gym_jsbsim/catalogs/__pycache__/jsbsim_catalog.cpython-38.pyc matches
+gym_jsbsim/catalogs/my_catalog.py:        sec = str(sim.get_property_value(JsbsimCatalog.simulation_sim_time_sec))
+gym_jsbsim/catalogs/my_catalog.py:    target_time = Property("tc/target-time-sec", "target time [sec]", 0)
+gym_jsbsim/simulation.py:        # set jsbsim integration time step
+gym_jsbsim/simulation.py:            raise RuntimeError("JSBSim failed to init simulation conditions.")
+gym_jsbsim/simulation.py:        end, e.g. because a simulation time was specified. False is returned
+gym_jsbsim/simulation.py:                raise RuntimeError("JSBSim failed.")
+gym_jsbsim/simulation.py:    def get_sim_time(self):
+gym_jsbsim/simulation.py:        """ Gets the simulation time from JSBSim, a float. """
+gym_jsbsim/simulation.py:        return self.jsbsim_exec.get_sim_time()
+gym_jsbsim/simulation.py:                raise RuntimeError(f"{prop} is not readable")
+gym_jsbsim/simulation.py:                raise RuntimeError(f"{prop} is not readable")
+Binary file gym_jsbsim/__pycache__/jsbsim_env.cpython-38.pyc matches
+Binary file gym_jsbsim/__pycache__/simulation.cpython-38.pyc matches
+gym_jsbsim/jsbsim-1.1.11/aircraft/DHC6/Engines/PT6A-27.xml:  <maxstartingtime>              20     </maxstartingtime>
+gym_jsbsim/jsbsim-1.1.11/aircraft/DHC6/Systems/Flaps.xml:         <time>      0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/DHC6/Systems/Flaps.xml:         <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/DHC6/Systems/Flaps.xml:         <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/DHC6/Systems/Flaps.xml:         <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/DHC6/Systems/Flaps.xml:         <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>      0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>      4 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>      3 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A4/A4.xml:          <time>     1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L17/L17.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/t6texan2/t6texan2.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172r/c172r.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172r/c172r.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172r/c172r.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172r/c172r.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172ap.xml:     hdot command (hdot is time rate of change of altitude, or rate of climb). As
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172x.xml:                       <time> 0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172x.xml:                       <time> 2 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172x.xml:                       <time> 1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172x/c172x.xml:                       <time> 1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/SGS/SGS.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/SGS/SGS.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/SGS/SGS.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/SGS/SGS.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pc7/Engines/PT6A.xml:  <maxstartingtime>              20     </maxstartingtime>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pc7/Systems/Landing Gear.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pc7/Systems/Landing Gear.xml:          <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pc7/Systems/Flaps.xml:         <time>      0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pc7/Systems/Flaps.xml:         <time>      4 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pc7/Systems/Flaps.xml:         <time>      3 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pa28/pa28.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pa28/pa28.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pa28/pa28.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pa28/pa28.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>4.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>3.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>5.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/XB-70/XB-70.xml:                        <time>1.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker50/fokker50.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/wrightFlyer1903/README.wrightFlyer1903.html:  canard and biplane wing stall at the same time. Typically, however,
+gym_jsbsim/jsbsim-1.1.11/aircraft/wrightFlyer1903/README.wrightFlyer1903.html:  flown four times before it was damaged on Dec 17, 1903.  The first
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/Fokker-F70.html:  Holding time                 45. minutes
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/Fokker-F70.html:  Block time              1.71      hours
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:         <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>     1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker100.xml:          <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:         <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>     1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/fokker70.xml:          <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:         <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>     1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/fokker100/xf100.xml:          <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/MD11/MD11.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/Submarine_Scout.xml:    - aneroid (pressure altimeter?) reading to 10,000 feet.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 60.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 120.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 250.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 150
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 160
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 500
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 1695.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 1700.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 1770.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:        sim-time-sec >= 1780.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Submarine_Scout/takeoff.xml:      <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/electrical.xml:      1       3      1     Captain's altimeter, DG, AI
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/electrical.xml:      6       2      2     Boost gauges, First officer's altimeter
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/electrical.xml:  <fcs_function name="electrical/instrument-lights/altimeter-power-W[0]">
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/electrical.xml:   <output>/systems/electrical/lamps/instruments/altimeter-power-W[0]</output>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/electrical.xml:  <fcs_function name="electrical/instrument-lights/altimeter-power-W[1]">
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/electrical.xml:   <output>/systems/electrical/lamps/instruments/altimeter-power-W[1]</output>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/Short_S23-hydrodynamics.xml:    Will lag one time-step behind the true value.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/datcom_aero.xml:               <value>1.30</value> <!-- Adjusted for climb time. -->
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/datcom_aero.xml:               times distance from centerline to MAC of surface.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Short_S23/Systems/datcom_aero.xml:               times distance from centerline to MAC of surface.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Pterosaur/Systems/Wing Motion.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Pterosaur/Systems/Wing Motion.xml:          <time>     1.1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Pterosaur/Systems/Ornithopter Controls.xml:              <time>0.3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Pterosaur/Systems/Ornithopter Controls.xml:              <time>0.3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Pterosaur/Systems/Landing Gear.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Pterosaur/Systems/Landing Gear.xml:          <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/A320/A320.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0.55</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0.55</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>3.0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>3.0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/f22.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f22/yf22.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c182/c182.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c182/c182.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c182/c182.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c182/c182.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/Systems/hook.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/Systems/hook.xml:          <time>     1.5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>3.0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>3.0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0.4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>3.0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>3.0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>2.5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f16/f16.xml:      <time>10</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/C130/C130.xml:                    <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs233/sgs233.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs233/sgs233.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.6</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.6</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0.4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f15/f15.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/J246/Systems/J246GuidanceExecutive.xml:  flight software. There is a clock timer that ticks off Mission Elapsed Time
+gym_jsbsim/jsbsim-1.1.11/aircraft/J246/Systems/J246GuidanceExecutive.xml:  (MET) as it marches on from the time that the solid rocket boosters (engine
+gym_jsbsim/jsbsim-1.1.11/aircraft/J246/Systems/J246GuidanceExecutive.xml:    <switch name="guidance/executive/launch-time">
+gym_jsbsim/jsbsim-1.1.11/aircraft/J246/Systems/J246GuidanceExecutive.xml:      <default value="simulation/sim-time-sec"/>
+gym_jsbsim/jsbsim-1.1.11/aircraft/J246/Systems/J246GuidanceExecutive.xml:      <test value="guidance/executive/launch-time"> fcs/throttle-cmd-norm[0] gt 0 </test>
+gym_jsbsim/jsbsim-1.1.11/aircraft/J246/Systems/J246GuidanceExecutive.xml:      <input> simulation/sim-time-sec </input>
+gym_jsbsim/jsbsim-1.1.11/aircraft/J246/Systems/J246GuidanceExecutive.xml:      <input> -guidance/executive/launch-time </input>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/Engines/YT40-A-16.xml:n1idle_max_delay [-] time constant for N1 change
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/Engines/YT40-A-16.xml:maxstartenginetime [sec]
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/Engines/YT40-A-16.xml:    after this time the automatic starting cycle is interrupted when the engine
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/Engines/YT40-A-16.xml:itt_delay [-] time constant for ITT change
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/Engines/YT40-A-16.xml:  <maxstartingtime>              20     </maxstartingtime>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>      0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>      4 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>      3 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/pogo-jsbsim/pogo-jsbsim.xml:          <time>     1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/README:    It was never forced into manoeuvres - they were executed by light pressure on the controls and subsequently relaxing, or sometimes reversing, the pressure once the desired rate of response was attained.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/Systems/crash-detect.xml:                simulation/sim-time-sec gt 1.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/Systems/crash-detect.xml:                simulation/sim-time-sec gt 1.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:Accelerating the aircraft caused the nose to climb, and swing to the left. At 110 miles per hour, there was about 15 to 20 pounds of back force on the control column, which could not be trimmed out because the aircraft had no pilot-adjustable, moveable horizontal stabilizer. Therefore, Camel pilots had to fly two-to-three hour missions, continually applying forward pressure just to maintain level flight. Letting go resulted in the aircraft pitching up, and rolling inverted to the right. Moving the stick forward to enter a dive caused the Camel to yaw left because of gyroscopic force, and correcting this yaw with right rudder caused the nose to pitch down sharply. By today's standards the Camel was completely unacceptable, and yet many pilots of 1917-8, most with under 100 hours of flying time used it as a lethal weapon.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:...I enjoyed flying the Camel, but its vices of control instability, extreme control sensitivity and pronounced gyroscopic effects all combined to create the impression of balancing an egg on the point of a needle rather than flying an aircraft...it was never forced into manoeuvres - they were executed by light pressure on the controls and subsequently relaxing, or sometimes reversing, the pressure once the desired rate of response was attained.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:My Sopwith Camel is, as far as I'm aware, the only original World War 1 Camel ever brought back to flying condition. It was originally owned by Colonel Jarrett of the Jarrett War Museum located on the old Steel Pier in Atlantic City; who in the 1930's had the best museum of WWI equipment ever assembled, including the Belgian War Museum in Brussels. The Jarrett Museum fell on hard times following WWII and, with time and money on my side after my service period, and a lifelong ambition of owning a WWI aircraft, I purchased for a small sum (by today's standards) several antique aircraft including the Camel, a Nieuport 28, a Pfalz D.XII, a Fokker D.VII and a SPAD VII.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:Since then I've spent more time flying the Camel than any of the other historical aircraft in our collection. I've also had more forced landings in it than all the rest of the WWI aircraft combined. It's that temperamental Le Rhone. Cylinders have blown, magneto's have failed, even fouled spark plugs have brought me down unceremoniously, with sweating hands and my heart in my mouth, desperately seeking a patch of open ground on which to land. Yet for all that it's the one I turn to first for any show or exhibition, as the Camel gets my blood going like no other. This is an aircraft that is a joy to fly.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:With the Le Rhone being temperamental as it is, flying the Camel is best done at times when there are few other aircraft in the sky, leaving easy access to the airport in cases of emergency. The Camel touches down easily but runs out of rudder control almost instantly, and if you bounce your landing at all, you are likely to find yourself in a hairy ground loop looking at a rapidly bending aileron dragging in the grass.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:"Camels were wonderful fliers when you had got used to them, which took about three months of hard flying. At the end of that time you were either dead, a nervous wreck, or the hell of a pilot and a terror to Huns . . ."
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:"The same with the half-roll. Nothing would half-roll like a Camel. A twitch of the stick and flick of the rudder and you were on your back. The nose dropped at once and you pulled out having made a complete reversal of direction in the least possible time.
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:" . . . a Camel had to be held in flying position all the time, and was out of it in a flash. It was nose light, having a rotary engine weighing next to nothing per horse power, and was rigged tail heavy so that you had to be holding her down all the time. Take your hand off the stick and it would rear right up with a terrific jerk and stand on its tail."
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:        <!-- This is Sw-sqft used many times below: -->
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:            <!-- This is a bit of a kludge to reduce the Camel service ceiling to 19,600 ft, and reduce performance above 12,000 as reported at the time. 
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:                    "its time period is 1 to 2 seconds, and the loss of height per turn 150 to 200 
+gym_jsbsim/jsbsim-1.1.11/aircraft/Camel/sopwithCamel1F1jsb.xml:                The rudder and elevator are very light and sensitive while the ailerons are astonishingly heavy, and appear to have practically no effect on anything at all. Heaving the stick from side to side produces a sort of drunken wallowing, like a politician trying to duck out of a commitment. A suspicious glance at the vibrating wings reveals that the ailerons are in fact still connected up -and the sight of them moving sluggishly in the airflow suggests the answer to the conundrum: the Camel has four enormous ailerons, and they are quite simply far too big. Furthermore, they have all the design subtlety of a quartet of barn doors. Frise effect, slotting, balancing, differential -these weren't even words in the aviation dictionary in 1916 when this lady was conceived, if you wanted your aeroplane to roll faster you just made the ailerons bigger. (And then, presumably, wondered why it didn't roll faster ... ) Those huge control surfaces so degrade the airflow over the wings that not only is their primary effect vastly blunted, but at the same time the drag thus engendered is awe-inspiring. Adverse yaw completely overcomes the normal secondary effect of roll, so that if you are so misguided as to take your feet off the Camel's rudder and then bank (say) to the left, the stubby round nose will instantly zap off to the right and keep going.    . . . 
+gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T37/T37.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.5000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>1.5000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.3000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.3000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.9000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>1.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>1.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>5.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>4.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>5.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>1.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/L410/L410.xml:                    <time>2.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>7.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>5.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>6.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>12.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>0.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Concorde/Concorde.xml:                    <time>1.0000</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>      0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>      4 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>      3 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B17/B17.xml:            <time>     1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/T38/T38.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/Boeing314/Boeing314.xml:                    <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                          <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                          <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/sgs126/sgs126.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/OV10/OV10.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/minisgs/minisgs.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/minisgs/minisgs.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/minisgs/minisgs.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/minisgs/minisgs.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172p/c172p.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172p/c172p.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172p/c172p.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c172p/c172p.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/F80C/F80C.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0.6</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:                        <time>0.6</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml:    <!-- 41 properties output, + 1 for the time stamp -->
+gym_jsbsim/jsbsim-1.1.11/aircraft/737/737.xml: <!-- 6 properties input, + 1 for the time stamp -->
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/gear.xml:					<time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/gear.xml:					<time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/flaps.xml:          <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/flaps.xml:          <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/flaps.xml:          <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/crash-detect.xml:                simulation/sim-time-sec gt 1.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/beacon.xml:           <property>simulation/sim-time-sec</property>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/chute.xml:						<time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/chute.xml:						<time>1.5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/speedbrakes.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/speedbrakes.xml:          <time>     1 </time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/tailhook.xml:          <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/tailhook.xml:          <time>1.5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/canopy.xml:          <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/f104/Systems/canopy.xml:          <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>2</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310.xml:                        <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/c310/c310ap.xml:     hdot command (hdot is time rate of change of altitude, or rate of climb). As
+gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>4</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>5</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/B747/B747.xml:                    <time>1</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/J3Cub/J3Cub.xml:  <reference refID="Du_Y_Thesis_2011" author="Yongliang Du" title="Development of real-time flight control system for low-cost vehicle" date="2011"/>
+gym_jsbsim/jsbsim-1.1.11/aircraft/J3Cub/J3Cub.xml:   * "Development of real-time flight control system for low-cost vehicle"
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>3</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>0</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/p51d.xml:                        <time>12</time>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/Engines/Packard-V-1650-7.xml:       bsfc and VE are overriden at runtime by the propulsion module 
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/Systems/compressability.xml:           <property>simulation/sim-time-sec</property>
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/Systems/crash-detect.xml:                simulation/sim-time-sec gt 1.0
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/Systems/mixture-control.xml:Lever in Full Rich position will give full rich mixture 100% of the time.
+gym_jsbsim/jsbsim-1.1.11/aircraft/p51d/Systems/alpha-buffet.xml:           <property>simulation/sim-time-sec</property>
+gym_jsbsim/jsbsim-1.1.11/systems/gear.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/gear.xml:          <time>     5 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/flaps.xml:          <time>      0 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/flaps.xml:          <time>      4 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/flaps.xml:          <time>      5 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/alpha_buffet.xml:           <property>sim-time-sec</property>
+gym_jsbsim/jsbsim-1.1.11/systems/hook.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/hook.xml:          <time>     1.5 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/refuel.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/refuel.xml:          <time>     2.5 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/speedbrakes.xml:          <time>     0 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/speedbrakes.xml:          <time>     1 </time>
+gym_jsbsim/jsbsim-1.1.11/systems/catapult.xml:       <kinematic name="systems/catapult/cat-timer">
+gym_jsbsim/jsbsim-1.1.11/systems/catapult.xml:                 <time>0.0</time>
+gym_jsbsim/jsbsim-1.1.11/systems/catapult.xml:                 <time>2.7</time>
+gym_jsbsim/jsbsim-1.1.11/systems/airship_added_mass.xml:       <property> simulation/sim-time-sec </property>
+gym_jsbsim/jsbsim-1.1.11/engine/Estes_E9.xml:  <builduptime> 0.15 </builduptime>
+gym_jsbsim/jsbsim-1.1.11/engine/SRB.xml:  <builduptime> 0.2 </builduptime>
+gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:n1idle_max_delay [-] time constant for N1 change
+gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:maxstartenginetime [sec]
+gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:    after this time the automatic starting cycle is interrupted when the engine
+gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:itt_delay [-] time constant for ITT change
+gym_jsbsim/jsbsim-1.1.11/engine/PW125BX.xml:  <maxstartingtime>              20     </maxstartingtime>
+gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:n1idle_max_delay [-] time constant for N1 change
+gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:maxstartenginetime [sec]
+gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:    after this time the automatic starting cycle is interrupted when the engine
+gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:itt_delay [-] time constant for ITT change
+gym_jsbsim/jsbsim-1.1.11/engine/engtm601.xml:  <maxstartingtime>              20     </maxstartingtime>
+gym_jsbsim/tests/test_simulation.py:            t = self.env.get_sim_time()
+gym_jsbsim/tests/test_simulation.py:            t = self.env.get_sim_time()
+gym_jsbsim/tests/test_simulation.py:            t = self.env.get_sim_time()
+gym_jsbsim.egg-info/PKG-INFO:         * A process to add extra features (like delta_heading for exemple) and the capability to call a dedicated function to update this attribute every time steps.
+gym_jsbsim.egg-info/PKG-INFO:        In this task, the aircraft should perform a stable steady flight following its initial heading and altitude. Every 150 seconds, a new target heading is set. At each time the target heading is more and more complicated to reach, starting with a delta of ±10° (random sign), following with ±20°, then ±30° and so on.
+gym_jsbsim.egg-info/PKG-INFO:        As state set for this environment, we compute every timestep, the distance (di) and angle (ai) to the next 4 path points according to location of the aircraft (ie: d1 to d4 and a1 to a4)
+.git/hooks/fsmonitor-watchman.sample:# The hook is passed a version (currently 1) and a time in nanoseconds
+.git/hooks/fsmonitor-watchman.sample:# modified since the given time. Paths must be relative to the root of
+.git/hooks/fsmonitor-watchman.sample:my ($version, $time) = @ARGV;
+.git/hooks/fsmonitor-watchman.sample:	$time = int ($time / 1000000000) - 1;
+.git/hooks/fsmonitor-watchman.sample:	# changed since $time but were not transient (ie created after
+.git/hooks/fsmonitor-watchman.sample:	# $time but no longer exist).
+.git/hooks/fsmonitor-watchman.sample:			"since": $time,
+.eggs/pytest_runner-6.0.0-py3.8.egg/ptr/__init__.py:        metadata, assert the requirement at run time.

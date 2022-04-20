@@ -2,6 +2,8 @@ import gym
 import numpy as np
 from gym_jsbsim.simulation import Simulation
 
+DEBUG = 2
+
 
 class JSBSimEnv(gym.Env):
 
@@ -75,11 +77,20 @@ class JSBSimEnv(gym.Env):
             # print(len(self.action_space.spaces))
             if not len(action) == len(self.action_space.spaces):
                 raise ValueError("mismatch between action and action space size")
+        else:
+            raise Exception("No actions available")
+            pass
 
         self.state = self.make_step(action)
+        
+        if DEBUG == 1:
+            print("\nState: ", self.state, "\n")
 
         reward, done, info = self.task.get_reward(self.state, self.sim), self.is_terminal(), {}
         state = self.state if not done else self._get_clipped_state()  # returned state should be in observation_space
+
+        if done:
+            print("TERMINATING")
 
         return state, reward, done, info
 
@@ -139,6 +150,10 @@ class JSBSimEnv(gym.Env):
 
         """
         is_not_contained = not self.observation_space.contains(self.state)
+        if is_not_contained:
+            print("TERMINAL is not contained")
+        if self.task.is_terminal(self.state, self.sim):
+            print("TERMINAL isterminal")
 
         return is_not_contained or self.task.is_terminal(self.state, self.sim)
 
@@ -216,7 +231,10 @@ class JSBSimEnv(gym.Env):
         :return: NamedTuple, the first state observation of the episode
 
         """
-        obs_list = self.sim.get_property_values(self.task.get_observation_var())
+        my_state = self.task.get_observation_var()
+        if DEBUG == 1:
+            print("DAlt= ", my_state)
+        obs_list = self.sim.get_property_values(my_state)
         return tuple([np.array([obs]) for obs in obs_list])
 
     def get_sim_time(self):
@@ -236,3 +254,14 @@ class JSBSimEnv(gym.Env):
     def set_state(self, state):
         self.sim.set_sim_state(state)
         self.state = self.get_observation()
+    
+    def print_obs_space_bounds(self):
+        for i, o in enumerate(self.observation_space):
+            print(i, " = [", o.low, ", ", o.high, "]\n")
+    
+    def print_action_space_bounds(self):
+        for i, o in enumerate(self.action_space):
+            print(i, " = [", o.low, ", ", o.high, "]\n")    
+
+    # def get_speed(self):
+    #     return sim.get_property_value(c.velocities_u_fps)

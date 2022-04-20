@@ -59,7 +59,7 @@ So far, is available:
 
 ```
 import gym
-import andy_gym_jsbsim
+import gym_jsbsim
 
 env = gym.make("GymJsbsim-HeadingControlTask-v0")
 env.reset()
@@ -110,7 +110,7 @@ The reward is computed as a function of:
 
 ```
 import gym
-import andy_gym_jsbsim
+import gym_jsbsim
 
 env = gym.make("GymJsbsim-HeadingAltitudeControlTask-v0")
 env.reset()
@@ -127,7 +127,7 @@ This is the same as the Heading Task, but the target altitude also changes every
 
 ```
 import gym
-import andy_gym_jsbsim
+import gym_jsbsim
 
 env = gym.make("GymJsbsim-TaxiControlTask-v0")
 env.reset()
@@ -143,7 +143,7 @@ In this environnement, the aircraft should behave on ground and following a spec
 For this environement, we have extract a path from the AMDB files of blagnac airport:
 
 <p align="center">
-  <img width="600" height="400" src=https://github.com/galleon/gym-jsbsim/blob/master/andy_gym_jsbsim/docs/l2f_taxi_path.png?raw=true>
+  <img width="600" height="400" src=https://github.com/galleon/gym-jsbsim/blob/master/gym_jsbsim/docs/l2f_taxi_path.png?raw=true>
 </p>
 
 and extracted from this path a list of geodesic coordinates that the aircraft should follow.
@@ -151,7 +151,7 @@ and extracted from this path a list of geodesic coordinates that the aircraft sh
 As state set for this environment, we compute every timestep, the distance (di) and angle (ai) to the next 4 path points according to location of the aircraft (ie: d1 to d4 and a1 to a4)
 
 <p align="center">
-  <img src=https://github.com/galleon/gym-jsbsim/blob/master/andy_gym_jsbsim/docs/l2f_taxistate.png?raw=true>
+  <img src=https://github.com/galleon/gym-jsbsim/blob/master/gym_jsbsim/docs/l2f_taxistate.png?raw=true>
 </p>
 
 
@@ -180,7 +180,7 @@ The scenario is over if the aircraft overtake the centerline from 10 meters or m
 
 ```
 import gym
-import andy_gym_jsbsim
+import gym_jsbsim
 
 env = gym.make("GymJsbsim-TaxiapControlTask-v0")
 env.reset()
