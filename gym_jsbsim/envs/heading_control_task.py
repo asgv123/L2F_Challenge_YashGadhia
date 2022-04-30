@@ -15,13 +15,16 @@ class HeadingControlTask(Task):
     state_var = [
         c.delta_altitude,
         c.delta_heading,
-        c.attitude_pitch_rad,
+        c.attitude_pitch_rad, #pitch
         c.attitude_roll_rad,
         c.velocities_v_down_fps,
         c.velocities_vc_fps,
-        c.velocities_p_rad_sec,
-        c.velocities_q_rad_sec,
-        c.velocities_r_rad_sec,
+        c.velocities_p_rad_sec, #roll rate
+        c.velocities_q_rad_sec, #pitch rate
+        c.velocities_r_rad_sec, #yaw rate
+        c.position_distance_from_start_mag_mt,
+        c.velocities_u_fps, #x should be 800
+        c.attitude_psi_rad,
     ]
 
     action_var = [
