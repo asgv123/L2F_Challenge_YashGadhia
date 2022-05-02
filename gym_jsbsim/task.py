@@ -3,7 +3,7 @@ import numpy as np
 import gym
 from gym.spaces import Box, Discrete
 from gym_jsbsim.catalogs.catalog import Catalog
-import my_globals
+from gym_jsbsim import my_globals
 
 class Task:
     """

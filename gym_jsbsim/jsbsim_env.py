@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 from gym_jsbsim.simulation import Simulation
-import my_globals
+from gym_jsbsim import my_globals
 
 class JSBSimEnv(gym.Env):
 
@@ -38,6 +38,12 @@ class JSBSimEnv(gym.Env):
         self.action_space = self.task.get_action_space()  # None
 
         self.state = None
+        var = input("Debug: ")
+        if var == "0":
+            my_globals.is_debug = False
+        else:
+            my_globals.is_debug = True
+        print(f"is_debug is {my_globals.is_debug}")
 
     def step(self, action=None):
         """

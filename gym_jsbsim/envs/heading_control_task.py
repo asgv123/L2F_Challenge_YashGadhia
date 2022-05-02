@@ -3,7 +3,7 @@ from gym_jsbsim.catalogs.catalog import Catalog as c
 import math
 import random
 import numpy as np
-import my_globals
+from gym_jsbsim import my_globals
 
 """
     A task in which the agent must perform steady, level flight following a certain heading.
