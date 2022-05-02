@@ -3,7 +3,7 @@ import numpy as np
 import gym
 from gym.spaces import Box, Discrete
 from gym_jsbsim.catalogs.catalog import Catalog
-
+import my_globals
 
 class Task:
     """
@@ -45,7 +45,7 @@ class Task:
         return False
 
     def get_observation_var(self):
-        return self.state_var
+        return self.state_var + my_globals.ret_list()
 
     def get_action_var(self):
         return self.action_var
@@ -71,6 +71,11 @@ class Task:
                 high = np.concatenate([high,np.array([prop.max])])
             elif prop.spaces is Discrete:
                 raise TypeError("Discrete state space found")
+        
+        #target_delta_r, target_delta_heading (deg), target_delta_alt
+        np.concatenate([low, np.array([0, -0.1, -42])])
+        np.concatenate([high, np.array([67, 0.1, 42])])
+        
         return Box(low=low, high=high, dtype="float")
 
     def get_action_space(self):
