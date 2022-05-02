@@ -87,7 +87,6 @@ class HeadingControlTask(Task):
         # given speed(fps), delta_heading(deg), turning_angle(deg), turning_time(s), can find next trajectories
         # take epsilon as threshold on delta_heading
         # return delta_r in m, delta_heading in deg, delta_alt in ft
-
         if abs(delta_heading) <= eps:
             return dt * forward_speed, 0, (delta_alt / turning_time) * dt
         else:
@@ -106,6 +105,11 @@ class HeadingControlTask(Task):
         my_globals.prev_r = sim.get_property_value(c.position_distance_from_start_mag_mt)
         my_globals.prev_heading = sim.get_property_value(c.attitude_psi_deg)
         my_globals.prev_alt = sim.get_property_value(c.position_h_sl_ft)
+
+        if sim.get_property_value(c.simulation_sim_time_sec) % 10 == 0:
+            if my_globals.is_debug:
+                print(f"{my_globals.target_delta_r}, {my_globals.target_delta_heading}, \
+                    {my_globals.target_delta_alt}")
 
         if sim.get_property_value(c.simulation_sim_time_sec) >= sim.get_property_value(c.steady_flight):
             # If the target heading and altitude were not reached, we stop the simulation

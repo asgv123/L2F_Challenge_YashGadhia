@@ -4,7 +4,7 @@ from os import environ
 import jsbsim
 from gym_jsbsim.catalogs.catalog import Catalog
 from gym_jsbsim.catalogs.property import Property, CustomProperty
-
+import my_globals
 
 class Simulation:
     """
@@ -48,6 +48,12 @@ class Simulation:
         self.agent_interaction_steps = agent_interaction_steps
 
         self.initialise(init_conditions)
+        var = input("Debug: ")
+        if var == 0:
+            my_globals.is_debug = False
+        else:
+            my_globals.is_debug = True
+        print(f"is_debug is {my_globals.is_debug}")
 
     def initialise(self, init_conditions):
         self.set_initial_conditions(init_conditions)
