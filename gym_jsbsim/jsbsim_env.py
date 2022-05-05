@@ -1,6 +1,7 @@
 import gym
 import numpy as np
 from gym_jsbsim.simulation import Simulation
+from gym_jsbsim.my_globals import MyGlobals
 
 
 class JSBSimEnv(gym.Env):
@@ -121,7 +122,9 @@ class JSBSimEnv(gym.Env):
             jsbsim_freq=self.task.jsbsim_freq,
             agent_interaction_steps=self.task.agent_interaction_steps,
         )
-
+        
+        MyGlobals.my_g_reset()
+        
         self.state = self.get_observation()
 
         self.observation_space = self.task.get_observation_space()
@@ -216,7 +219,10 @@ class JSBSimEnv(gym.Env):
         :return: NamedTuple, the first state observation of the episode
 
         """
-        obs_list = self.sim.get_property_values(self.task.get_observation_var())
+        obs_names = self.task.get_observation_var()
+        inbuilt_obs_list = self.sim.get_property_values(obs_names[:-3])
+        global_obs_list = MyGlobals.my_g_ret_list()
+        obs_list = inbuilt_obs_list + global_obs_list
         return tuple([np.array([obs]) for obs in obs_list])
 
     def get_sim_time(self):

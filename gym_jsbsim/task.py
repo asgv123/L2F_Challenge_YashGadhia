@@ -68,11 +68,14 @@ class Task:
 
         space_tuple = ()
 
-        for prop in self.state_var:
+        for prop in self.state_var[:-3]:
             if prop.spaces is Box:
                 space_tuple += (Box(low=np.array([prop.min]), high=np.array([prop.max]), dtype="float"),)
             elif prop.spaces is Discrete:
                 space_tuple += (Discrete(prop.max - prop.min + 1),)
+        space_tuple += (Box(low=np.array([-67]), high=np.array([67]), dtype="float"),)
+        space_tuple += (Box(low=np.array([-1]), high=np.array([1]), dtype="float"),)
+        space_tuple += (Box(low=np.array([-50]), high=np.array([50]), dtype="float"),)
         return gym.spaces.Tuple(space_tuple)
 
     def get_action_space(self):

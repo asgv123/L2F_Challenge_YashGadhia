@@ -1,3 +1,4 @@
+from ctypes import c_buffer
 import math
 from enum import Enum
 from gym.spaces import Box, Discrete
@@ -10,6 +11,11 @@ class JsbsimCatalog(Property, Enum):
     A class to store and customize jsbsim properties
 
     """
+    #custom
+    c_t_d_r = 0
+    c_t_d_h = 0
+    c_t_d_a = 0
+
 
     # position and attitude
 
