@@ -11,6 +11,10 @@ class JsbsimCatalog(Property, Enum):
 
     """
 
+    c_target_delta_r = 0
+    c_target_delta_heading = 0
+    c_target_delta_alt = 0
+
     # position and attitude
 
     position_h_sl_ft = Property("position/h-sl-ft", "altitude above mean sea level [ft]", -1400, 85000)

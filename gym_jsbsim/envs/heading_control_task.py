@@ -23,6 +23,9 @@ class HeadingControlTask(Task):
         c.velocities_q_rad_sec, #pitch rate
         c.velocities_r_rad_sec, #yaw rate
         c.velocities_u_fps, #"body frame x-axis velocity [ft/s]", should be 800
+        c.c_target_delta_r,
+        c.c_target_delta_heading,
+        c.c_target_delta_alt,
     ]
 
     action_var = [

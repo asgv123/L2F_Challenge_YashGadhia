@@ -45,7 +45,7 @@ class Task:
         return False
 
     def get_observation_var(self):
-        return self.state_var + my_globals.ret_name_list()
+        return self.state_var
 
     def get_action_var(self):
         return self.action_var
@@ -73,8 +73,8 @@ class Task:
                 raise TypeError("Discrete state space found")
         
         #target_delta_r, target_delta_heading (deg), target_delta_alt
-        np.concatenate([low, np.array([0, -0.1, -42])])
-        np.concatenate([high, np.array([67, 0.1, 42])])
+        np.concatenate([low, np.array([-67, -1, -50])])
+        np.concatenate([high, np.array([67, 1, 50])])
         
         return Box(low=low, high=high, dtype="float")
 
