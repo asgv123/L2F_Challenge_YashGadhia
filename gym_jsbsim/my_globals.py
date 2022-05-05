@@ -19,3 +19,12 @@ def ret_list():
 
 def ret_name_list():
 	return ["target_delta_r", "target_delta_heading", "target_delta_alt"]
+
+def reset():
+	target_delta_r = 0
+	target_delta_heading = 0
+	target_delta_alt = 0
+	prev_r = 0
+	prev_heading = 0
+	prev_alt = 10000
+	is_debug = False

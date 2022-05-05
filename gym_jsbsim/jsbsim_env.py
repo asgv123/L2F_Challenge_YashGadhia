@@ -129,12 +129,14 @@ class JSBSimEnv(gym.Env):
             agent_interaction_steps=self.task.agent_interaction_steps,
         )
 
+        my_globals.reset()
+        
         self.state = self.get_observation()
 
         self.observation_space = self.task.get_observation_space()
 
         self.action_space = self.task.get_action_space()
-        print(self.state)
+
         return self.state
 
     def is_terminal(self):
