@@ -44,6 +44,7 @@ class JSBSimEnv(gym.Env):
         else:
             my_globals.is_debug = True
         print(f"is_debug is {my_globals.is_debug}")
+        my_globals.init()
 
     def step(self, action=None):
         """
@@ -133,7 +134,7 @@ class JSBSimEnv(gym.Env):
         self.observation_space = self.task.get_observation_space()
 
         self.action_space = self.task.get_action_space()
-
+        print(self.state)
         return self.state
 
     def is_terminal(self):

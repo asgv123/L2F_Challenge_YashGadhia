@@ -45,7 +45,7 @@ class Task:
         return False
 
     def get_observation_var(self):
-        return self.state_var + my_globals.ret_list()
+        return self.state_var + my_globals.ret_name_list()
 
     def get_action_var(self):
         return self.action_var

@@ -16,3 +16,6 @@ def init():
 
 def ret_list():
 	return [target_delta_r, target_delta_heading, target_delta_alt]
+
+def ret_name_list():
+	return ["target_delta_r", "target_delta_heading", "target_delta_alt"]
